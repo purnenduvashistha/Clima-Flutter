@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:clima/services/location.dart';
+import 'package:clima/services/networking.dart';
+
+const apiKey = '4a1241a78d0335e8b6a623827d142913';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -7,27 +10,33 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  double latitude;
+  double longitude;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getLocation();
+    getLocationData();
   }
 
-  void getLocation() async {
+  void getLocationData() async {
     //moved to location.dart
     Location location = Location();
-    await location.getCurrentLocation(); //await is used to get latitude and longitude a value
-    print(location.latitude);
-    print(location.longitude);
-    }
+    await location
+        .getCurrentLocation(); //await is used to get latitude and longitude a value
+    latitude = location.latitude;
+    longitude = location.longitude;
+
+    NetworkHelper networkHelper = NetworkHelper(
+        'api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=$apiKey');
+    var weatherData = await networkHelper.getData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton/*in place of RaisedButton*/(
+        child: ElevatedButton /*in place of RaisedButton*/ (
           onPressed: () {
             //getLocation();
           },
@@ -37,6 +46,3 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 }
-
-
-//Latitude: 25.62162162162162, Longitude: 85.16734872717178
